@@ -11,9 +11,9 @@ var (
 )
 
 type Repository interface {
-	Create(article *article.Article) error
+	Create(article *article.Article) (int64, error)
 	Update(article *article.Article) error
-	Detail() *article.Article
-	Delete() error
+	Detail(article *article.Article) *article.Article
+	Delete(article *article.Article) error
 	List() []*article.Article
 }

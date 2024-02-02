@@ -20,8 +20,31 @@ func NewArticle(articleRepository article.Repository,
 	}
 }
 
-func (a Article) Create(artEnt *entityArticle.Article) error {
-	if err := a.articleRepository.Create(artEnt); err != nil {
+func (a Article) Create(artEnt *entityArticle.Article) (int64, error) {
+	id, err := a.articleRepository.Create(artEnt)
+	if err != nil {
+		if errors.Is(err, article.ErrArticleAlreadyExist) {
+			return id, err
+		}
+		a.logger.Error(err.Error())
+		return id, err
+	}
+	return id, nil
+}
+
+func (a Article) Update(artEnt *entityArticle.Article) error {
+	if err := a.articleRepository.Update(artEnt); err != nil {
+		if errors.Is(err, article.ErrArticleAlreadyExist) {
+			return err
+		}
+		a.logger.Error(err.Error())
+		return err
+	}
+	return nil
+}
+
+func (a Article) Delete(artEnt *entityArticle.Article) error {
+	if err := a.articleRepository.Delete(artEnt); err != nil {
 		if errors.Is(err, article.ErrArticleAlreadyExist) {
 			return err
 		}
