@@ -37,6 +37,9 @@ func (a Article) Update(artEnt *entityArticle.Article) error {
 		if errors.Is(err, article.ErrArticleAlreadyExist) {
 			return err
 		}
+		if errors.Is(err, article.ErrArticleNotFound) {
+			return err
+		}
 		a.logger.Error(err.Error())
 		return err
 	}
@@ -45,11 +48,23 @@ func (a Article) Update(artEnt *entityArticle.Article) error {
 
 func (a Article) Delete(artEnt *entityArticle.Article) error {
 	if err := a.articleRepository.Delete(artEnt); err != nil {
-		if errors.Is(err, article.ErrArticleAlreadyExist) {
+		if errors.Is(err, article.ErrArticleNotFound) {
 			return err
 		}
 		a.logger.Error(err.Error())
 		return err
 	}
 	return nil
+}
+
+func (a Article) Detail(artEnt *entityArticle.Article) (*entityArticle.Article, error) {
+	artEnt, err := a.articleRepository.Detail(artEnt)
+	if err != nil {
+		if errors.Is(err, article.ErrArticleNotFound) {
+			return nil, err
+		}
+		a.logger.Error(err.Error())
+		return nil, err
+	}
+	return artEnt, nil
 }

@@ -13,7 +13,7 @@ var (
 type Repository interface {
 	Create(article *article.Article) (int64, error)
 	Update(article *article.Article) error
-	Detail(article *article.Article) *article.Article
+	Detail(article *article.Article) (*article.Article, error)
 	Delete(article *article.Article) error
 	List() []*article.Article
 }

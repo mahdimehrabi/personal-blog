@@ -11,22 +11,48 @@ type ArticleMock struct {
 
 func (m ArticleMock) Create(article *articleEntity.Article) (int64, error) {
 	args := m.Called(article)
-	return int64(args.Int(0)), args.Error(1)
+	errVal := args.Get(1)
+	var err error
+	if errVal != nil {
+		err = errVal.(error)
+	}
+	return int64(args.Int(0)), err
 }
 
 func (m ArticleMock) Update(article *articleEntity.Article) error {
 	args := m.Called(article)
-	return args.Error(0)
+	errVal := args.Get(0)
+	var err error
+	if errVal != nil {
+		err = errVal.(error)
+	}
+	return err
 }
 
-func (m ArticleMock) Detail(article *articleEntity.Article) *articleEntity.Article {
+func (m ArticleMock) Detail(article *articleEntity.Article) (*articleEntity.Article, error) {
 	args := m.Called(article)
-	return args.Get(0).(*articleEntity.Article)
+	articleVal := args.Get(0)
+	var articleEntVal *articleEntity.Article
+	if articleVal != nil {
+		article = articleVal.(*articleEntity.Article)
+	}
+
+	errVal := args.Get(1)
+	var err error
+	if errVal != nil {
+		err = errVal.(error)
+	}
+	return articleEntVal, err
 }
 
 func (m ArticleMock) Delete(article *articleEntity.Article) error {
 	args := m.Called(article)
-	return args.Error(0)
+	errVal := args.Get(0)
+	var err error
+	if errVal != nil {
+		err = errVal.(error)
+	}
+	return err
 }
 
 func (m ArticleMock) List() []*articleEntity.Article {
