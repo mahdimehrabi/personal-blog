@@ -55,7 +55,19 @@ func (m ArticleMock) Delete(article *articleEntity.Article) error {
 	return err
 }
 
-func (m ArticleMock) List() []*articleEntity.Article {
+func (m ArticleMock) List() ([]*articleEntity.Article, error) {
 	args := m.Called()
-	return args.Get(0).([]*articleEntity.Article)
+
+	var articles []*articleEntity.Article
+	articlesVal := args.Get(0)
+	if articlesVal != nil {
+		articles = articlesVal.([]*articleEntity.Article)
+	}
+
+	errVal := args.Get(1)
+	var err error
+	if errVal != nil {
+		err = errVal.(error)
+	}
+	return articles, err
 }

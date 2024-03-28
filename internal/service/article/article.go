@@ -68,3 +68,12 @@ func (a Article) Detail(artEnt *entityArticle.Article) (*entityArticle.Article, 
 	}
 	return artEnt, nil
 }
+
+func (a Article) List() ([]*entityArticle.Article, error) {
+	articles, err := a.articleRepository.List()
+	if err != nil {
+		a.logger.Error(err.Error())
+		return nil, err
+	}
+	return articles, nil
+}

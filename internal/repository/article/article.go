@@ -15,5 +15,5 @@ type Repository interface {
 	Update(article *article.Article) error
 	Detail(article *article.Article) (*article.Article, error)
 	Delete(article *article.Article) error
-	List() []*article.Article
+	List() ([]*article.Article, error)
 }

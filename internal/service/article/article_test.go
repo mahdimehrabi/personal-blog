@@ -198,3 +198,35 @@ func TestArticle_Detail_NotFound(t *testing.T) {
 	articleMock.AssertExpectations(t)
 	logger.AssertNotCalled(t, "Error")
 }
+
+func TestArticle_List_Success(t *testing.T) {
+	logger := new(infrastructure.LoggerMock)
+	articleMock := new(repository.ArticleMock)
+	articleEnt := []*article.Article{
+		{
+			ID: 1,
+		},
+	}
+	articleMock.On("List").Return(articleEnt, nil)
+
+	articleService := NewArticle(articleMock, logger)
+	returnedArticleEnt, err := articleService.List()
+	assert.Nil(t, err)
+	assert.Equal(t, returnedArticleEnt, articleEnt)
+	articleMock.AssertExpectations(t)
+}
+
+func TestArticle_List_DBErr(t *testing.T) {
+	expectedErr := errors.New("fake db error")
+	logger := new(infrastructure.LoggerMock)
+	articleMock := new(repository.ArticleMock)
+	logger.On("Error", mock.Anything).Return()
+	articleMock.On("List").Return(nil, expectedErr)
+
+	articleService := NewArticle(articleMock, logger)
+	returnedArticleEnt, err := articleService.List()
+	assert.ErrorIs(t, err, expectedErr)
+	assert.Nil(t, returnedArticleEnt)
+	articleMock.AssertExpectations(t)
+	logger.AssertExpectations(t)
+}
